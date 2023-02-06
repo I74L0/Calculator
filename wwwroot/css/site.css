@@ -28,13 +28,21 @@ main {
 }
 
 .display {
+  position: relative;
   grid-column: 1/6;
   padding-right: 1rem;
   justify-content: end!important;
   border: none!important;
   font-size: 3vw!important;
 }
-
+#sec {
+  display: none;
+  position: absolute;
+  font-size: 0.7em;
+  color: #666;
+  top: 0px;
+  right: 0.6em;
+}
 .calculator > div {
   border: .1vw solid #000;
   border-radius: 1vw;

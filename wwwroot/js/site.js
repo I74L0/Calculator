@@ -1,84 +1,90 @@
-﻿var num1 = "", operator = "", num2 = "";
-var p = document.getElementById("p");
+// Get the main and secondary number
+let main = document.getElementById('main'), sec = document.getElementById('sec');
 
-var array = document.querySelectorAll(".operation");
-for (let index = 0; index < array.length; index++) {
-    let element = array[index];
-    element.addEventListener("click", function () {
-        num2 = p.innerHTML.slice(num1.length + 1);
-        if (element.innerHTML != "=") {
-            if (num1 == "") {
-                num1 = p.innerHTML;
-            } else {
-                p.innerHTML = Operation(parseFloat(num1), parseFloat(num2));
-                num1 = p.innerHTML;
-                num2 = "";
-            }
-            operator = element.innerHTML;
-        }
-        else {
-            if (num2 != "") {
-                p.innerHTML = Operation(parseFloat(num1), parseFloat(num2));
-                num1 = "", operator = "", num2 = "";
-            }
+// Display clicked number
+let numbers = document.querySelectorAll(".number");
+for (let i = 0; i < numbers.length; i++) {
+    let number = numbers[i];
+    number.addEventListener("click", function () {
+        if (main.innerHTML.length < 8) {
+            if (main.innerHTML == "0" || main.innerHTML == "ERR")
+                main.innerHTML = number.innerHTML;
+            else
+                main.innerHTML = main.innerHTML + number.innerHTML;
         }
     });
 }
 
-array = document.querySelectorAll(".calculator > div:not(#C)");
-for (let index = 0; index < array.length; index++) {
-    let element = array[index];
-    element.addEventListener("click", function () {
-        if (p.innerHTML != "0") {
-            if (num1 == "") {
-                if (p.innerHTML.length < 8) {
-                    if (element.innerHTML != "=") {
-                        p.innerHTML = p.innerHTML + element.innerHTML;
-                    }
-                }
-            } else {
-                if (p.innerHTML.length - num1.length - 1 < 8)
-                    p.innerHTML = p.innerHTML + element.innerHTML;
-            }
+// Clear the main number
+document.getElementById('C').addEventListener("click", function () {
+    main.innerHTML = "0";
+});
+
+// Clear all the display
+document.getElementById('AC').addEventListener("click", function () {
+    main.innerHTML = "0";
+    sec.innerHTML = "0";
+    sec.style.display = "none";
+});
+
+// Insert dot in number
+document.getElementById(".").addEventListener("click", function () {
+    let isValid = true;
+    for (const index of main.innerHTML) {
+        if (!parseFloat(index) && index != "0" || main.innerHTML.length >= 8)
+            isValid = false;
+    }
+    if (isValid)
+        main.innerHTML = main.innerHTML + ".";
+});
+
+// Makes the number positive or negative
+document.getElementById("sign").addEventListener("click", function () {
+    let isPositive = Math.sign(parseInt(main.innerHTML));
+    if (isPositive == 1)
+        main.innerHTML = "-" + main.innerHTML;
+    else if (isPositive == -1)
+        main.innerHTML = main.innerHTML.slice(1);
+});
+
+// Display the operation
+let operations = document.querySelectorAll(".operation");
+for (let i = 0; i < operations.length; i++) {
+    let operation = operations[i];
+    operation.addEventListener("click", function () {
+        if (sec.innerHTML == "0") {
+            sec.style.display = "block";
+            sec.innerHTML = main.innerHTML + operation.innerHTML;
         }
         else {
-            p.innerHTML = element.innerHTML;
+            let main_num = parseFloat(main.innerHTML);
+            let sec_num = parseFloat(sec.innerHTML);
+            main.innerHTML = Operation(sec_num, sec.innerHTML.slice(-1), main_num);
+            sec.innerHTML = Operation(sec_num, sec.innerHTML.slice(-1), main_num) + operation.innerHTML;
         }
     });
 }
 
-document.getElementById("C").addEventListener("click", function () {
-    if (p.innerHTML.length > 1) {
-        if (p.innerHTML.length > num1.length + 1) {
-            p.innerHTML = p.innerHTML.slice(0, -1);
-        }
-    }
-    else {
-        p.innerHTML = "0"
-    }
-});
-
-document.getElementById("AC").addEventListener("click", function () {
-    p.innerHTML = "0";
-    num1 = "", operator = "", num2 = "";
-});
-
-function Operation(n1, n2) {
+// Executes operation
+function Operation(n1, operation, n2) {
     let n = 0;
-    switch (operator) {
+    switch (operation) {
         case "+":
             n = n1 + n2;
+            break;
         case "-":
             n = n1 - n2;
+            break;
         case "x":
             n = n1 * n2;
+            break;
         case "/":
             n = n1 / n2;
+            break;
     }
     n = n.toString();
-    if (n.length > 8) {
+    if (n.length > 8)
         return 'ERR';
-    } else {
+    else
         return n;
-    }
 }
