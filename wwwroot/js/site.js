@@ -52,18 +52,32 @@ let operations = document.querySelectorAll(".operation");
 for (let i = 0; i < operations.length; i++) {
     let operation = operations[i];
     operation.addEventListener("click", function () {
+
+        // If calculator is in initial state
         if (sec.innerHTML == "0") {
             sec.style.display = "block";
             sec.innerHTML = main.innerHTML + operation.innerHTML;
         }
+
+        // If operation already occurred
         else {
             let main_num = parseFloat(main.innerHTML);
             let sec_num = parseFloat(sec.innerHTML);
             main.innerHTML = Operation(sec_num, sec.innerHTML.slice(-1), main_num);
             sec.innerHTML = Operation(sec_num, sec.innerHTML.slice(-1), main_num) + operation.innerHTML;
         }
+        main.innerHTML = "0";
     });
 }
+
+// Performs the final operation
+document.getElementById("equal").addEventListener("click", function () {
+    if (sec.innerHTML != "0") {
+        main.innerHTML = Operation(parseFloat(sec.innerHTML), sec.innerHTML.slice(-1), parseFloat(main.innerHTML));
+        sec.innerHTML = "0";
+        sec.style.display = "none";
+    }
+});
 
 // Executes operation
 function Operation(n1, operation, n2) {
@@ -83,6 +97,7 @@ function Operation(n1, operation, n2) {
             break;
     }
     n = n.toString();
+    // If length is greater than 8, display error
     if (n.length > 8)
         return 'ERR';
     else
